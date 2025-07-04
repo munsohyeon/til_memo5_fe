@@ -3,21 +3,38 @@ import { reactive, onMounted } from 'vue';
 import httpService from '@/services/HttpService';
 
 const state = reactive({
-    memos: []
+  memos: [],
 });
 
 onMounted(() => {
+  console.log('Home.vue - onMounted 함수호출 확인용')
     getList({ });
 });
 
 const getList = async (params) => {
-    const data = await httpSevice.getList(params);
-    state.memos = data.resultData;
+  const data = await httpService.getList(params);
+  state.memos = data.resultData;
 }
 const model = {
 searchText : ''
 };
 
+const search = () => {
+  const params = {
+    searchText: model.searchText
+  }
+  getList(params);
+}
+
+const remove = async (id) => {
+  if (!confirm("Delet")) { return;}
+    const data = await httpService.delete(id);
+
+    if (data.resultData === 1) {
+      alert("finish delete");
+      search();
+    } 
+  }
 </script>
 
 <template>
@@ -43,7 +60,7 @@ searchText : ''
         </div>
       </div>
     </router-link>    
-  </div>  <MemoCard @delete-item="removeItem" v-for="m in state.memos" :item="m" :key="m.id"/>
+  </div> 
 
 </template>
 

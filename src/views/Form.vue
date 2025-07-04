@@ -20,10 +20,26 @@ onMounted(() => {
         state.memo = JSON.parse(memoData);
     }
 });
+
+const submit = async () => {
+  const bodyJson = {
+    title: state.memo.title,
+    content: state.memo.content
+  }
+  let data = null;
+  if (state.memo.id) {
+    bodyJson.id = state.memo.id;
+    data = await httpService.put(bodyJson);
+    router.push({ path: `memos/${bodyJson.id}` });
+  } else {
+    data = await httpService.post(bodyJson);
+    router.push({ path: '/' });
+  }
+}
 </script>
 
 <template>
- <form class="detail" @submit.prevent="procSubmit">
+ <form class="detail" @submit.prevent="submit">
     <div class="mb-3" v-if="state.memo.createdAt">
       등록일시: {{ state.memo.createdAt }}
     </div>
